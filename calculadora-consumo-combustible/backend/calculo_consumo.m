@@ -1,20 +1,18 @@
-function [consumo, v_opt] = calculo_consumo(vel, peso, terreno)
-  velocidades = [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180];
-  consumos_base = [8.2, 7.4, 6.5, 6.0, 5.8, 6.2, 6.9, 7.8, 8.9, 10.2, 11.7, 13.5, 15.5, 17.8, 20.4];
+function [consumo, velocidad_optima] = calculo_consumo(velocidad, peso, terreno)
+    % Datos de velocidad y consumo (ejemplo)
+    Velocidades = [40, 50, 60, 70, 80, 90, 100];
+    Consumos_base = [8.5, 7.0, 6.2, 6.5, 7.1, 8.0, 9.0];
 
-  switch terreno
-    case 1, factor = 1;
-    case 2, factor = 1.15;
-    case 3, factor = 0.9;
-  endswitch
+    % Ajuste por peso y terreno (esto es solo un ejemplo, puedes adaptarlo)
+    ajuste_peso = peso / 1000;  % Relación con el peso base (ajustar según sea necesario)
+    ajuste_terreno = terreno;   % Ajuste por tipo de terreno (1: plano, 2: subida, 3: bajada)
 
-  peso_ref = 1200;
-  peso_factor = 1 + (peso - peso_ref) / 10000;
-  consumos = consumos_base * factor * peso_factor;
+    % Cálculo del consumo ajustado
+    Consumos_final = Consumos_base .* ajuste_terreno .* ajuste_peso;
 
-  consumo = interp1(velocidades, consumos, vel, "spline");
+    % Interpolación para el consumo estimado
+    consumo = IntLineal(velocidad, Velocidades, Consumos_final);
 
-  objetivo = @(v) interp1(velocidades, consumos, v, "spline");
-  v_opt = fminbnd(objetivo, min(velocidades), max(velocidades));
+    % Calculamos la velocidad óptima con el método de Newton-Raphson
+    velocidad_optima = velocidad_optima_newton(Velocidades, Consumos_final);
 end
-

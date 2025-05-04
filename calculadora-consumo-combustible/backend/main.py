@@ -6,13 +6,13 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 # Configuración de CORS
-CORS(app, origins="http://localhost:8000")
+CORS(app, origins="*")  # Permite solicitudes de cualquier origen
 
 # Inicializa Oct2Py fuera de las rutas
 oc = Oct2Py()
 
 # Agregar el path donde está calculo_consumo.m
-oc.addpath(r"C:\Users\Juand\OneDrive\Escritorio\Modelamiento\proyecto_final\modelamiento\calculadora-consumo-combustible\backend")
+oc.addpath(r"C:\Users\Juand\OneDrive\Escritorio\Modelamiento\proyecto_final_m\calculadora-consumo-combustible\backend")
 
 @app.route('/')
 def index():

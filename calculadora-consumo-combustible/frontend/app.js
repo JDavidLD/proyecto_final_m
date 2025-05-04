@@ -1,5 +1,3 @@
-console.log('Archivo app.js cargado');
-
 document.getElementById('calcular').addEventListener('click', function() {
     const velocidad = parseFloat(document.getElementById('velocidad').value);
     const peso = parseFloat(document.getElementById('peso').value);
@@ -9,12 +7,17 @@ document.getElementById('calcular').addEventListener('click', function() {
 
     // Validaciones
     if (isNaN(velocidad) || isNaN(peso)) {
-        resultadoDiv.innerHTML = "<span style='color:red;'>Por favor, ingrese valores válidos.</span>";
+        resultadoDiv.innerHTML = "<span class='error'>Por favor, ingrese valores válidos para la velocidad y el peso.</span>";
         return;
     }
 
     if (velocidad < 30 || velocidad > 180) {
-        resultadoDiv.innerHTML = "<span style='color:red;'>La velocidad debe estar entre 30 y 180 km/h.</span>";
+        resultadoDiv.innerHTML = "<span class='error'>La velocidad debe estar entre 30 y 180 km/h.</span>";
+        return;
+    }
+
+    if (peso < 900) {
+        resultadoDiv.innerHTML = "<span class='error'>Por favor, ingrese un peso de al menos 900 kg.</span>";
         return;
     }
 
@@ -43,6 +46,6 @@ document.getElementById('calcular').addEventListener('click', function() {
     })
     .catch(error => {
         console.error('Error:', error);
-        resultadoDiv.innerHTML = "<span style='color:red;'>Error al obtener los resultados. Verifique la consola.</span>";
+        resultadoDiv.innerHTML = "<span class='error'>Error al obtener los resultados. Verifique la consola.</span>";
     });
 });
