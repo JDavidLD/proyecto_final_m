@@ -4,14 +4,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, origins="http://localhost:8000")
 
-# Configuración de CORS
-CORS(app, origins="*")  # Permite solicitudes de cualquier origen
-
-# Inicializa Oct2Py fuera de las rutas
+# Inicializa Oct2Py
 oc = Oct2Py()
 
-# Agregar el path donde está calculo_consumo.m
+# Ruta al script de Octave
 oc.addpath(r"C:\Users\Juand\OneDrive\Escritorio\Modelamiento\proyecto_final_m\calculadora-consumo-combustible\backend")
 
 @app.route('/')
@@ -20,20 +18,24 @@ def index():
 
 @app.route('/calcular', methods=['POST'])
 def calcular():
-    # Recibir los datos del frontend
-    data = request.get_json()
+    data = request.get_json(force=True)
+    print("JSON recibido:", data)
+
     velocidad = data['velocidad']
     peso = data['peso']
-    terreno_map = {"Plano": 1, "Subida": 2, "Bajada": 3}
-    terreno = terreno_map.get(data['terreno'], 1)
+    terreno = data['terreno']
+    distancia = data['distancia']
 
-    # Llamar a la función de Octave, que ahora devuelve consumo y velocidad_optima
-    consumo, velocidad_optima = oc.calculo_consumo(velocidad, peso, terreno, nout=2)
+    # Mapeo del tipo de terreno
+    terreno_map = {'Plano': 1, 'Subida': 2, 'Bajada': 3}
+    terreno_num = terreno_map.get(terreno, 1)
 
-    # Asegurarse de que ambos valores sean enviados al frontend
+    # Llamada a Octave
+    consumo_estimado, gasto_estimado = oc.calculo_consumo_y_gasto(velocidad, peso, terreno_num, distancia, nout=2)
+
     return jsonify({
-        "consumo_estimado": round(float(consumo), 2),
-        "velocidad_optima": round(float(velocidad_optima), 2)  # Agregar la velocidad óptima
+        'consumo_estimado': round(float(consumo_estimado), 2),
+        'gasto_estimado': round(float(gasto_estimado), 2)
     })
 
 if __name__ == '__main__':
