@@ -2,20 +2,35 @@ document.getElementById('calcular').addEventListener('click', function() {
     const velocidad = parseFloat(document.getElementById('velocidad').value);
     const peso = parseFloat(document.getElementById('peso').value);
     const terreno = document.getElementById('terreno').value;
-    const distancia = parseFloat(document.getElementById("distancia").value); // ← DESCOMENTADO
+    const distancia = parseFloat(document.getElementById("distancia").value); 
 
     const resultadoDiv = document.getElementById('resultado');
+
+    
+    if (isNaN(velocidad) || velocidad < 30 || velocidad > 180) {
+        resultadoDiv.innerHTML = "<span class='error'>La velocidad debe estar entre 30 y 180 km/h.</span>";
+        return;
+    }
+
+    if (isNaN(peso) || peso < 900) {
+        resultadoDiv.innerHTML = "<span class='error'>El peso debe ser al menos 900 kg.</span>";
+        return;
+    }
+
+    if (isNaN(distancia) || distancia < 0) {
+        resultadoDiv.innerHTML = "<span class='error'>La distancia debe ser un número positivo.</span>";
+        return;
+    }
 
     const datos = {
         velocidad: velocidad,
         peso: peso,
         terreno: terreno,
-        distancia: distancia // ← DESCOMENTADO
+        distancia: distancia 
     };
 
-    console.log("Datos a enviar:", datos);
-
-    fetch('http://localhost:5000/calcular', {
+    // Hacer la solicitud al servidor
+    fetch('https://tu-backend.onrender.com/calcular', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

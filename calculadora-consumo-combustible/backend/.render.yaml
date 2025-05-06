@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: backend-consumo
+    env: python
+    buildCommand: apt-get update && apt-get install -y octave
+    startCommand: python app.py
+    plan: free

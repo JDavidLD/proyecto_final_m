@@ -4,13 +4,14 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins="http://localhost:8000")
+CORS(app)
 
 # Inicializa Oct2Py
 oc = Oct2Py()
 
-# Ruta al script de Octave
-oc.addpath(r"C:\Users\Juand\OneDrive\Escritorio\Modelamiento\proyecto_final_m\calculadora-consumo-combustible\backend")
+# Ruta relativa al script de Octave
+script_dir = os.path.dirname(r"C:\Users\Juand\OneDrive\Escritorio\Modelamiento\proyecto_final_m\calculadora-consumo-combustible\backend")
+oc.addpath(script_dir)
 
 @app.route('/')
 def index():
@@ -19,7 +20,6 @@ def index():
 @app.route('/calcular', methods=['POST'])
 def calcular():
     data = request.get_json(force=True)
-    print("JSON recibido:", data)
 
     velocidad = data['velocidad']
     peso = data['peso']
@@ -31,7 +31,9 @@ def calcular():
     terreno_num = terreno_map.get(terreno, 1)
 
     # Llamada a Octave
-    consumo_estimado, gasto_estimado = oc.calculo_consumo_y_gasto(velocidad, peso, terreno_num, distancia, nout=2)
+    consumo_estimado, gasto_estimado = oc.calculo_consumo_y_gasto(
+        velocidad, peso, terreno_num, distancia, nout=2
+    )
 
     return jsonify({
         'consumo_estimado': round(float(consumo_estimado), 2),
@@ -39,4 +41,5 @@ def calcular():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=5000)
+
